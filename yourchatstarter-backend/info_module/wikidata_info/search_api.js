@@ -5,15 +5,7 @@ const wdk = WBK({
     sparqlEndpoint: 'https://query.wikidata.org/sparql'
 })
 
-const property_lookup = [
-    {name: 'ngày sinh', id: 'P569'},
-    {name: 'lãnh đạo chính phủ', id: 'P6'},
-    {name: 'phụ thân', id: 'P22'},
-    {name: 'mẫu thân', id: 'P25'},
-    {name: 'lãnh đạo nhà nước', id: 'P35'},
-    {name: 'sân nhà', id: 'P115'},
-    {name: 'thể loại', id: 'P136'}
-]
+const property_lookup = require('./property_list.json')
 
 function search(keyword) {
     const url = wdk.searchEntities({
@@ -113,9 +105,12 @@ function getEntitiesProperty(property, entity) {
         console.log(property_id, entity_id)
 
         const sparql = `
-        SELECT ?value ?unitLabel ?itemLabel WHERE { 
+        SELECT ?value ?unitLabel ?itemLabel ?imageLabel WHERE { 
             {
                 wd:${entity_id} wdt:${property_id} ?item.
+                OPTIONAL {
+                    ?item wdt:P18 ?image.
+                }
             }
             UNION {
                 wd:${entity_id} p:${property_id} ?statement.
@@ -144,7 +139,7 @@ function getEntitiesProperty(property, entity) {
                     reject('cant find info')
                     return
                 }
-                resolve(simplify_res[0])
+                resolve(simplify_res)
             })
             .catch((err) => {
                 reject(err)

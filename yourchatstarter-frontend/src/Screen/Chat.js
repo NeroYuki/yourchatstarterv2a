@@ -147,6 +147,9 @@ export class Chat extends Component {
 			action_result = action_parser(body.action)
 		}
 		//console.log(body.response)
+		if (!body.response) {
+			body.response = "Hình như mình làm rớt não ở đâu đó, bạn có thể kiểm tra kết nối đến mạng internet được không :("
+		}
 		this.setState({
 			messageList: [...this.state.messageList, { text: body.response, isFromClient: false, additionalAction: action_result}],
 			context: body.context
@@ -239,6 +242,7 @@ export class Chat extends Component {
         // }
         // text = text.replace(/\[(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?.*\/]/g, "")
 		//console.log('before', text)
+		if (!text) return
 		text = text.replace(/__|\*|\#|!*(?:\[([^\]]*)\]\([^)]*\))/g, "")
 		//console.log('after', text)
 		let utterance = new SpeechSynthesisUtterance(text)

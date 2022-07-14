@@ -7,7 +7,7 @@ const currency_list = require('./ner_data/currency.json')
 const conversion_units = require('./ner_data/conversion_units.json')
 
 async function main() {
-	const options = { languages: ['vi'], forceNER: true, autoSave: false };
+	const options = { languages: ['vi'], forceNER: true, autoSave: false, ner: {threshold: 0.9}};
 	const manager = new NlpManager(options);
 
 	manager.describeLanguage('vi', 'Vietnamese');
@@ -40,6 +40,12 @@ async function main() {
 		'./corpus_data/corpus-vi-semi-basic.json',
 	])
 
+	await manager.nlp.addCorpora([
+		'./corpus_data/corpus-vi-basic.json',
+		'./corpus_data/corpus-vi-service.json',
+		'./corpus_data/corpus-vi-semi-basic.json',
+	])
+
 	const locationKeys = Object.keys(location_vn);
 	console.log('loading location data...')
 	for (let i = 0; i < locationKeys.length; i += 1) {
@@ -49,11 +55,12 @@ async function main() {
 	}
 
 	manager.addNamedEntityText('location', 'Thành phố Hồ Chí Minh', 'vi', ['TP.HCM', 'TP. Hồ Chí Minh', 'thành phố hồ chí minh', 'Thành phố Hồ Chí Minh'])
+	manager.addNamedEntityText('location', 'Đồng Hới', 'vi', ["Đồng Hới", "Thành phố Đồng Hới", "TP. Đồng Hới"])
 
 	console.log('loading stock code data...')
 	for (let i = 0; i < stocks_list.length; i++) {
 		const stock_entry = stocks_list[i]
-		manager.addNamedEntityText('stock_code', stock_entry.Symbol, 'vi', stock_entry.Symbol)
+		manager.addNamedEntityText('stock_code', stock_entry.Symbol, 'vi', [stock_entry.Symbol, stock_entry['Company Name']])
 	}
 
 	console.log('loading conversion unit data...')
@@ -74,8 +81,10 @@ async function main() {
 	// manager.addRegexEntity('email', 'vi', /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6})*$/)
 	// manager.addRegexEntity('http_url', 'vi', /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)/ )
 	manager.addRegexEntity('phrase', "vi", /"[^"]+"/)
-	manager.addRegexEntity('location_prompt', "vi", /^.*(?= ở đâu)/)
-	manager.addRegexEntity('location_prompt', "vi", /(?<=định vị ).*$/)
+	manager.addRegexEntity('location_phrase', "vi", /^.*(?= ở đâu)/)
+	manager.addRegexEntity('location_phrase', "vi", /(?<=định vị ).*$/)
+
+	manager.addRegexEntity('expression', "vi", /([\d\(\+\-]|sin|cos|tan|abs|pow)([\s\d\(\)\+\-\*\/\.]|sin|cos|tan|abs|pow)+([\d\)])/)
 	// manager.addRegexEntity('date', 'vi', /^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/)
 	// manager.addRegexEntity('time', 'vi', /((1[0-2]|0?[1-9]):([0-5][0-9]) ?([AaPp][Mm]))/)
 	// manager.addRegexEntity('time', 'vi', /^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
@@ -90,8 +99,8 @@ async function main() {
 	manager.addNamedEntityText('language', 'fr', 'vi', ["tiếng pháp"])
 	manager.addNamedEntityText('language', 'de', 'vi', ["tiếng đức"])
 	manager.addNamedEntityText('app_name', 'spotify', 'vi', ['spotify'])
-	manager.addNamedEntityText('app_name', 'youtube', 'vi', ['youtube'])
-	manager.addNamedEntityText('app_name', 'gmail', 'vi', ['gmail', 'google mail'])
+	manager.addNamedEntityText('app_name', 'youtube', 'vi', ['youtube', 'du túp'])
+	manager.addNamedEntityText('app_name', 'gmail', 'vi', ['gmail', 'google mail', 'thư điện tử'])
 	manager.addNamedEntityText('app_name', 'zalo', 'vi', ['zalo'])
 	manager.addNamedEntityText('app_name', 'shopee', 'vi', ['shopee'])
 	manager.addNamedEntityText('app_name', 'tiktok', 'vi', ['tiktok'])
@@ -113,7 +122,7 @@ async function main() {
 	manager.addNamedEntityText('app_name', 'word', 'vi', ['word'])
 	manager.addNamedEntityText('app_name', '1.1.1.1', 'vi', ['1.1.1.1', 'warp+', 'warp'])
 	manager.addNamedEntityText('app_name', 'discord', 'vi', ['điscord'])
-	manager.addNamedEntityText('app_name', 'chrome', 'vi', ['chrome'])
+	manager.addNamedEntityText('app_name', 'chrome', 'vi', ['chrome', 'trình  duyệt'])
 	manager.addNamedEntityText('app_name', 'duolingo', 'vi', ['duolingo'])
 	manager.addNamedEntityText('app_name', "maps", 'vi', ['bản đồ', 'google map', 'map'])
 	manager.addNamedEntityText('app_name', "contacts", 'vi', ['contact' ,'danh bạ', 'sổ điện thoại', 'danh sách liên lạc'])
