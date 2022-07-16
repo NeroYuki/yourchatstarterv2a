@@ -115,9 +115,18 @@ module.exports.setupInstance = async () => {
         console.log('initializing custom NER')
 
         let date_vi = new customNER("date", "vi")
-        date_vi.addNewDictRule(["mai", "hôm sau"], new Date(Date.now() + 1000 * 3600 * 24), 0.8)
-        date_vi.addNewDictRule(["hôm qua", "hôm trước"], new Date(Date.now() - 1000 * 3600 * 24), 0.8)
-        date_vi.addNewDictRule(["hôm nay"], new Date(), 0.8)
+        date_vi.addNewDictRule(["mai", "hôm sau"], 
+            (prefix_val, match_str, suffix_val) => {
+                return new Date(Date.now() + 1000 * 3600 * 24)
+            }, 1)
+        date_vi.addNewDictRule(["hôm qua", "hôm trước"], 
+            (prefix_val, match_str, suffix_val) => {
+                return new Date(Date.now() - 1000 * 3600 * 24)
+            }, 1)
+        date_vi.addNewDictRule(["hôm nay"], 
+            (prefix_val, match_str, suffix_val) => {
+                return new Date()
+            }, 1)
 
 
         date_vi.addNewDictRule(["giờ nữa", "giờ sau", "tiếng nữa", "tiếng sau", "h nữa", "h sau", "g nữa", "g sau"],
@@ -185,24 +194,30 @@ module.exports.setupInstance = async () => {
 
         let interval_ner = new customNER("interval", "vi")
         interval_ner.addNewDictRule(["mỗi ngày"], 
-            {
-                start_time: Date.now(),
-                interval: 24 * 3600 * 1000
-            }
+            (prefix_val, match_str, suffix_val) => {
+                return {
+                    start_time: Date.now(),
+                    interval: 24 * 3600 * 1000
+                }
+            }, 1
         )
         
         interval_ner.addNewDictRule(["mỗi giờ"], 
-            {
-                start_time: Date.now(),
-                interval: 3600 * 1000
-            }
+            (prefix_val, match_str, suffix_val) => {
+                return {
+                    start_time: Date.now(),
+                    interval: 3600 * 1000
+                }
+            }, 1
         )
     
         interval_ner.addNewDictRule(["mỗi tuần"], 
-            {
-                start_time: Date.now(),
-                interval: 7 * 24 * 3600 * 1000
-            }
+            (prefix_val, match_str, suffix_val) => {
+                return {
+                    start_time: Date.now(),
+                    interval: 24 * 7 * 3600 * 1000
+                }
+            }, 1
         )
 
         let custom_wiki_property_entity = new customNER('wiki_property_entity', 'vi')
