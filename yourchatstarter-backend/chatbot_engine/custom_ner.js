@@ -121,7 +121,7 @@ class customNERImplementation {
                 }
             }
 
-            if (rule.parse_prefix || rule.parse_suffix || typeof output === "function") {
+            if (rule.parse_prefix || rule.parse_suffix || typeof rule.output === "function") {
                 //if number_prefix or number_suffix is 
                 let [prefix, suffix] = input.split(best_str)
                 let prefix_val = prefix, suffix_val = suffix
