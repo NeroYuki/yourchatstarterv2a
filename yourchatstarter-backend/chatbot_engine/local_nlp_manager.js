@@ -115,8 +115,8 @@ module.exports.setupInstance = async () => {
         console.log('initializing custom NER')
 
         let date_vi = new customNER("date", "vi")
-        date_vi.addNewDictRule(["mai", "hôm sau"], new Date(new Date().valueOf() + 1000 * 3600 * 24), 0.8)
-        date_vi.addNewDictRule(["hôm qua", "hôm trước"], new Date(new Date().valueOf() - 1000 * 3600 * 24), 0.8)
+        date_vi.addNewDictRule(["mai", "hôm sau"], new Date(Date.now() + 1000 * 3600 * 24), 0.8)
+        date_vi.addNewDictRule(["hôm qua", "hôm trước"], new Date(Date.now() - 1000 * 3600 * 24), 0.8)
         date_vi.addNewDictRule(["hôm nay"], new Date(), 0.8)
 
 
@@ -127,7 +127,7 @@ module.exports.setupInstance = async () => {
                     val = parseFloat(prefix_val)
                 }
                 catch (e) { console.log('error parsing prefix') }
-                return new Date(new Date().valueOf() + 1000 * 3600 * val)
+                return new Date(Date.now() + 1000 * 3600 * val)
             }, 1, /\s+\d+\s*$/g, null
         )
 
@@ -138,7 +138,7 @@ module.exports.setupInstance = async () => {
                     val = parseFloat(prefix_val)
                 }
                 catch (e) { console.log('error parsing prefix') }
-                return new Date(new Date().valueOf() + 1000 * 60 * val)
+                return new Date(Date.now() + 1000 * 60 * val)
             }, 1, /\s+\d+\s*$/g, null
         )
 
@@ -149,7 +149,7 @@ module.exports.setupInstance = async () => {
                     val = parseFloat(prefix_val)
                 }
                 catch (e) { console.log('error parsing prefix') }
-                return new Date(new Date().valueOf() + 1000 * 3600 * 24 * val)
+                return new Date(Date.now() + 1000 * 3600 * 24 * val)
             }, 1, /\s+\d+\s*$/g, null
         )
 
@@ -186,21 +186,21 @@ module.exports.setupInstance = async () => {
         let interval_ner = new customNER("interval", "vi")
         interval_ner.addNewDictRule(["mỗi ngày"], 
             {
-                start_time: new Date().valueOf(),
+                start_time: Date.now(),
                 interval: 24 * 3600 * 1000
             }
         )
         
         interval_ner.addNewDictRule(["mỗi giờ"], 
             {
-                start_time: new Date().valueOf(),
+                start_time: Date.now(),
                 interval: 3600 * 1000
             }
         )
     
         interval_ner.addNewDictRule(["mỗi tuần"], 
             {
-                start_time: new Date().valueOf(),
+                start_time: Date.now(),
                 interval: 7 * 24 * 3600 * 1000
             }
         )
